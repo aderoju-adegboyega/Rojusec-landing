@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Rojusec — Stop phishing before it hits your inbox</title>
+  <style>
+    :root {
+      --bg-main: #0b0f17;
+      --bg-card: #111927;
+      --border-card: #2a3550;
+      --text-main: #e8eef8;
+      --text-dim: #8f9bbd;
+      --accent: #375fff;
+      --accent-hover: #5674ff;
+      --radius-card: 16px;
+      --radius-pill: 999px;
+      --max-width: 1200px;
+      --font-stack: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, "Segoe UI", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      line-height: 1.45;
+      margin: 0;
+      padding: 0;
+    }
+
+    .page {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 2rem clamp(1rem, 2vw, 2rem) 5rem;
+      display: grid;
+      gap: 4rem;
+    }
+
+    /* HERO */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    @media (min-width: 800px) {
+      .hero {
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+      }
+    }
+
+    .tagline {
+      display: inline-block;
+      background: rgba(55,95,255,0.12);
+      border: 1px solid rgba(55,95,255,0.4);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-pill);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 1vw + 1.6rem, 2rem);
+      font-weight: 600;
+      color: var(--text-main);
+      margin: 0 0 1rem;
+    }
+
+    .hero-sub {
+      color: var(--text-dim);
+      font-size: 1rem;
+      max-width: 34ch;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-bullets {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 2rem;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+
+    .hero-bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-bullets li span.icon {
+      color: var(--accent);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .early-access-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-card);
+      padding: 1rem 1rem 1.25rem;
+      max-width: 360px;
+      box-shadow: 0 0 30px rgba(58,77,255,0.25);
+    }
+
+    .early-access-card h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .early-access-card p {
+      margin: 0 0 1rem;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    .form-field {
+      display: grid;
+      gap: 0.4rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .form-field label {
+      font-size: 0.75rem;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .form-field input,
+    .form-field textarea {
+      width: 100%;
+      background: #0b101d;
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 0.7rem 0.75rem;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      resize: none;
+    }
+
+    .form-field input::placeholder,
+    .form-field textarea::placeholder {
+      color: #515c7b;
+    }
+
+    .submit-btn {
+      appearance: none;
+      border: 0;
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .submit-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .microcopy {
+      color: var(--text-dim);
+      font-size: 0.7rem;
+      line-height: 1.4;
+      margin-top: 0.75rem;
+      text-align: center;
+    }
+
+    /* MOCK PANEL / PREVIEW CARD */
+    .preview-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-card);
+      padding: 1rem 1rem 1.25rem;
+      max-width: 400px;
+      box-shadow: 0 0 30px rgba(58,77,255,0.15);
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .risk-pill {
+      background: rgba(255,71,71,0.12);
+      color: rgb(255,71,71);
+      border: 1px solid rgba(255,71,71,0.4);
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: var(--radius-pill);
+      padding: 0.4rem 0.6rem;
+      line-height: 1.2;
+    }
+
+    .risk-score {
+      color: var(--text-main);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .preview-body {
+      font-size: 0.75rem;
+      line-height: 1.4;
+      color: var(--text-main);
+      margin-bottom: 1rem;
+    }
+
+    .preview-body code {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      padding: 0.15rem 0.4rem;
+      font-size: 0.7rem;
+      color: var(--accent-hover);
+    }
+
+    .preview-list {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 0.75rem;
+    }
+
+    .preview-list h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+
+    .preview-list ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.7rem;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    .preview-list li {
+      margin-bottom: 0.4rem;
+    }
+
+    /* SECTIONS */
+    .section {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .section h2 {
+      margin: 0;
+      color: var(--text-main);
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section h2 .emoji {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .section p,
+    .section li {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .features-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    @media (min-width: 700px) {
+      .features-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-card);
+      padding: 1rem;
+    }
+
+    .feature-pill {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 500;
+      line-height: 1.2;
+      padding: 0.35rem 0.6rem;
+      border-radius: var(--radius-pill);
+      background: rgba(55,95,255,0.12);
+      border: 1px solid rgba(55,95,255,0.4);
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .feature-card p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    .why-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    @media (min-width: 700px) {
+      .why-list {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .why-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-card);
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    .why-item strong {
+      display: block;
+      color: var(--text-main);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    /* FOUNDER */
+    .founder-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-card);
+      padding: 1rem 1rem 1.25rem;
+      max-width: 600px;
+    }
+
+    .founder-card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .founder-card p {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      margin: 0 0 1rem;
+    }
+
+    .founder-meta {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 2rem;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    footer .brand {
+      font-weight: 600;
+      color: var(--text-main);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="page">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div>
+        <div class="tagline">Rojusec • Early Access</div>
+
+        <h1>Stop phishing before it hits your inbox.</h1>
+
+        <div class="hero-sub">
+          Rojusec is an AI email security engine that understands intent,
+          impersonation, and social engineering — not just bad links.
+        </div>
+
+        <ul class="hero-bullets">
+          <li><span class="icon">⛔</span><span>Flags fake CFO / finance requests before anyone pays.</span></li>
+          <li><span class="icon">🧠</span><span>Detects AI-written scams, not just broken English.</span></li>
+          <li><span class="icon">🔍</span><span>Explains <em>why</em> an email is risky in plain language.</span></li>
+        </ul>
+
+        <div class="early-access-card">
+          <h2>Request Early Access</h2>
+          <p>Priority onboarding for finance, security, and MSP teams.</p>
+
+          <form id="lead-form">
+            <div class="form-field">
+              <label for="email">Work Email *</label>
+              <input id="email" name="email" type="email" placeholder="you@company.com" required />
+            </div>
+
+            <div class="form-field">
+              <label for="company">Company (optional)</label>
+              <input id="company" name="company" type="text" placeholder="Acme Corp"/>
+            </div>
+
+            <div class="form-field">
+              <label for="pain">Biggest phishing headache?</label>
+              <textarea id="pain" name="pain" rows="3" placeholder="Example: fake CEO payment requests, invoice fraud, gift card scams..."></textarea>
+            </div>
+
+            <button class="submit-btn" type="submit">Request Access</button>
+
+            <div class="microcopy">
+              You’ll hear from Deji (founder) directly. No marketing blasts.
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- right side preview / social proof -->
+      <div class="preview-card">
+        <div class="preview-header">
+          <div class="risk-pill">Likely Phish</div>
+          <div class="risk-score">Score: 92 / 100</div>
+        </div>
+
+        <div class="preview-body">
+          "URGENT: Your account will be suspended in 24 hours. Please update your billing info and confirm your identity."
+          <br/><br/>
+          Rojusec flagged this email because it combines
+          <code>urgent tone</code>,
+          <code>payment pressure</code>,
+          and <code>identity theft attempt</code>.
+        </div>
+
+        <div class="preview-list">
+          <h3>Why it was blocked</h3>
+          <ul>
+            <li>Never-seen sender pretending to be CFO</li>
+            <li>Payment instructions + urgency</li>
+            <li>Suspicious link with lookalike domain</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROBLEM -->
+    <section class="section" id="problem">
+      <h2><span class="emoji">⚠️</span><span>Phishing is no longer obvious</span></h2>
+      <p>
+        Attackers don't send "Nigerian prince" emails anymore.
+        They impersonate your CFO, send believable invoice updates,
+        and pressure finance to "just handle this today."
+      </p>
+      <p>
+        Legacy filters still rely on blocklists and spam rules.
+        That’s too easy to bypass in 2025.
+      </p>
+    </section>
+
+    <!-- FEATURES / HOW IT WORKS -->
+    <section class="section" id="how">
+      <h2><span class="emoji">🛡️</span><span>How Rojusec protects you</span></h2>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-pill">Detects Social Engineering</div>
+          <h3>Language Intelligence</h3>
+          <p>
+            We analyze tone, pressure, and urgency in the email body.
+            "Your account will be suspended in 24 hours — verify now"
+            gets flagged instantly.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-pill">Stops CEO Fraud</div>
+          <h3>Identity & Impersonation</h3>
+          <p>
+            We learn who normally emails who in your org. If
+            <strong>ceo@company-finance.com</strong> shows up pretending
+            to be your real CFO, we catch it before accounting does.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-pill">Prevents Payload Delivery</div>
+          <h3>Links & Attachments</h3>
+          <p>
+            We inspect links, redirect chains, punycode, and malicious
+            attachment lures before they hit the inbox.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIFFERENTIATORS -->
+    <section class="section" id="why">
+      <h2><span class="emoji">✨</span><span>Why companies want this now</span></h2>
+
+      <div class="why-list">
+        <div class="why-item">
+          <strong>We catch targeted scams, not just spam.</strong>
+          Most tools are built for mass phishing.
+          We’re built for “Hey, can you process this wire?” fraud.
+        </div>
+
+        <div class="why-item">
+          <strong>We explain the risk in plain English.</strong>
+          Your analysts see why: "Urgent tone + payment request +
+          unknown sender." No black box.
+        </div>
+
+        <div class="why-item">
+          <strong>We integrate fast.</strong>
+          No hardware, no MX record surgery.
+          Connect Microsoft 365 or Google Workspace and start getting alerts.
+        </div>
+      </div>
+    </section>
+
+    <!-- FOUNDER -->
+    <section class="section" id="founder">
+      <div class="founder-card">
+        <h3>Why I'm building this</h3>
+        <p>
+          I’m Deji, a cybersecurity engineer. I've worked in threat detection,
+          risk, and email security for real environments — not just labs.
+        </p>
+        <p>
+          Rojusec is designed for the attacks I see every week:
+          fake CEO payment requests,
+          fake “Microsoft 365 disabled” notices,
+          fake invoice attachments.
+        </p>
+        <div class="founder-meta">
+          Connect with me on LinkedIn.  
+          Halifax / Remote.
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="brand">Rojusec Security</div>
+      Halifax / Remote<br/>
+      © 2025<br/>
+      Security questions? hello@rojusec.com
+    </footer>
+
+  </main>
+
+  <script>
+    // basic fake-submit handler so the form doesn't actually navigate yet
+    const form = document.getElementById('lead-form');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      if (!email) {
+        alert("Please enter your work email so we can reach you.");
+        return;
+      }
+      alert("Thank you. We'll reach out soon.");
+      form.reset();
+    });
+  </script>
+</body>
+</html>
